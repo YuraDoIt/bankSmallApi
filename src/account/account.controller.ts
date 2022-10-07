@@ -1,5 +1,14 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
-import { AccountService, moneyOperationType } from './account.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { moneyOperationType } from '../commonStructure/moneyOperationType';
+import { AccountService } from './account.service';
 import { CreateAccountInterface } from './dto/create.account.dto';
 
 @Controller('account')
@@ -7,7 +16,10 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Get('/byid')
-  async getAccoutnById(@Body() body: { id: string }) {
+  async getAccoutnById(
+    @Body() body: { id: string },
+    @Param() currency: string,
+  ) {
     return this.accountService.findById(body.id);
   }
 

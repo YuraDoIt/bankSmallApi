@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ErrorInterface } from '../interfaces/error.interface';
-import { ResponseInterface } from '../interfaces/response.interface';
+import { ErrorInterface } from '../commonStructure/error.interface';
+import { moneyOperationType } from '../commonStructure/moneyOperationType';
+import { ResponseInterface } from '../commonStructure/response.interface';
 import { CreateAccountInterface } from './dto/create.account.dto';
 import {
   Account,
   AccountDocumet,
   AccountSchema,
 } from './entities/account.entity';
-
-export type moneyOperationType = 'add' | 'remove';
 
 @Injectable()
 export class AccountService {
@@ -111,8 +110,6 @@ export class AccountService {
       };
     }
   }
-
-  async removeMoney(id: string, amount: number) {}
 
   async deleteAll() {
     return await this.accountModel.deleteMany({}).exec();
