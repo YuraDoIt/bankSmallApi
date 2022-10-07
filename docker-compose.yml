@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  web:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: managment-app:latest
+    container_name: nest-managment-app
+    restart: always
+    ports:
+      - '4000:4000'
+    environment:
+      PORT: 5050
+      MONGO_URL: root:pass12345@localhost
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - server-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:5.0.0
+    container_name: server-mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pass12345
+    networks:
+      - server-network
+    ports:
+      - 27017:27017
+
+networks:
+  server-network:
