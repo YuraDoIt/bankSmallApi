@@ -23,4 +23,6 @@ export class AccountService {
   async getAllAccount(): Promise<any> {
     return await this.accountModel.find().exec();
   }
+
+  async;
 }
