@@ -1,7 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Body, Post } from '@nestjs/common';
+import { CreateAccountI } from '../account/dto/create.account.dto';
+import { CreateTransactionDtoI } from './dto/create.transaction.dto';
 import { TransactionService } from './transaction.service';
 
-@Controller()
+@Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
@@ -13,5 +15,11 @@ export class TransactionController {
   @Get('account')
   async getAllTransaction() {
     return this.transactionService.getAllAccount();
+  }
+
+  @Post('create')
+  async createTransact(@Body() dto: CreateTransactionDtoI) {
+    console.log(dto);
+    return this.transactionService.createTransaction(dto);
   }
 }

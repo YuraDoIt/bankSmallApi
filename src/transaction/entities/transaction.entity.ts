@@ -13,7 +13,7 @@ export class Transaction {
   public dateTransaction: string;
 
   @Prop()
-  public idSender: number;
+  public idSender: string;
 
   @Prop()
   public idGetter: string;

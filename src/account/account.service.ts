@@ -5,7 +5,8 @@ import { currencyType } from '../commonStructure/currency.type';
 import { ErrorInterface } from '../commonStructure/error.interface';
 import { moneyOperationType } from '../commonStructure/moneyOperationType';
 import { ResponseInterface } from '../commonStructure/response.interface';
-import { CreateAccountInterface } from './dto/create.account.dto';
+import { Transaction } from '../transaction/entities/transaction.entity';
+import { CreateAccountI } from './dto/create.account.dto';
 import {
   Account,
   AccountDocumet,
@@ -19,9 +20,7 @@ export class AccountService {
     private readonly accountModel: Model<AccountDocumet>,
   ) {}
 
-  async createAccount(
-    dto: CreateAccountInterface,
-  ): Promise<Account | ErrorInterface> {
+  async createAccount(dto: CreateAccountI): Promise<Account | ErrorInterface> {
     if (dto.balans < 0) {
       return {
         code: 404,
@@ -32,7 +31,13 @@ export class AccountService {
   }
 
   async getAllAccount(): Promise<any | ErrorInterface> {
-    return { code: 200, account: await this.accountModel.find().exec() };
+    return {
+      code: 200,
+      account: await this.accountModel
+        .find()
+        .populate('transaction', null, Transaction.name)
+        .exec(),
+    };
   }
 
   async findById(

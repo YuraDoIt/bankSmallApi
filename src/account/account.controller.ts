@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { moneyOperationType } from '../commonStructure/moneyOperationType';
 import { AccountService } from './account.service';
-import { CreateAccountInterface } from './dto/create.account.dto';
+import { CreateAccountI } from './dto/create.account.dto';
 
 @Controller('account')
 export class AccountController {
@@ -45,7 +45,7 @@ export class AccountController {
   }
 
   @Post('create')
-  async createAccount(@Body() dto: CreateAccountInterface) {
+  async createAccount(@Body() dto: CreateAccountI) {
     return await this.accountService.createAccount(dto);
   }
 
