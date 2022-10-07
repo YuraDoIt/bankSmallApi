@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
-import { AccountService } from './account.service';
+import { AccountService, moneyOperationType } from './account.service';
 import { CreateAccountInterface } from './dto/create.account.dto';
 
 @Controller('account')
@@ -8,18 +8,28 @@ export class AccountController {
 
   @Get('/byid')
   async getAccoutnById(@Body() body: { id: string }) {
-    console.log(body.id);
     return this.accountService.findById(body.id);
   }
 
-  @Get('/getAll')
+  @Get('getAll')
   async getAllAccount() {
     return this.accountService.getAllAccount();
   }
 
   @Get('addMoney')
-  async addMonyet() {
-    return this.accountService.addMoney(1, 200);
+  async moneyTransact(
+    @Body()
+    body: {
+      id: string;
+      amount: number;
+      typeTransact: moneyOperationType;
+    },
+  ) {
+    return this.accountService.moneyOperation(
+      body.id,
+      body.amount,
+      body.typeTransact,
+    );
   }
 
   @Post('create')
@@ -27,7 +37,7 @@ export class AccountController {
     return await this.accountService.createAccount(dto);
   }
 
-  @Delete('all')
+  @Delete('delete')
   async deleteAll() {
     return await this.accountService.deleteAll();
   }
