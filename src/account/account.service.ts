@@ -54,12 +54,20 @@ export class AccountService {
     amount: number,
     typeOperation: moneyOperationType,
   ) {
-    if (!typeOperation || typeOperation != 'add' || typeOperation != 'remove') {
+    if (!typeOperation) {
       return {
         code: 505,
         message: 'please put type of transaction add || remove',
       };
     }
+    if (typeOperation != 'add') {
+      if (typeOperation != 'remove')
+        return {
+          code: 505,
+          message: 'please put type of transaction add || remove',
+        };
+    }
+
     let currentAccount: Account = await this.accountModel.findById(id);
 
     if (!currentAccount) {
