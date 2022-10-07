@@ -24,7 +24,7 @@ export class Account {
   @Prop()
   public balans: number;
 
-  @Prop()
+  @Prop({ type: [Types.ObjectId], ref: Transaction.name })
   public transaction: Transaction[];
 }
 

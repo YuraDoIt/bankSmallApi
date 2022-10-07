@@ -1,1 +1,1 @@
-type currency = 'USD' | 'EUR' | 'POL' | 'CHECH';
+export type currencyType = 'USD' | 'EUR' | 'POL' | 'CHECH';
