@@ -3,17 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { currencyType } from '../commonStructure/currency.type';
 import { ErrorInterface } from '../commonStructure/error.interface';
-import { moneyOperationType } from '../commonStructure/moneyOperationType';
-import { ResponseInterface } from '../commonStructure/response.interface';
 import { Transaction } from '../transaction/entities/transaction.entity';
 import { CreateAccountI } from './dto/create.account.dto';
-import { moneyOperationDto } from './dto/money.operation.dto';
 import { moneyTransactionDto } from './dto/money.transaction.dto';
-import {
-  Account,
-  AccountDocumet,
-  AccountSchema,
-} from './entities/account.entity';
+import { Account, AccountDocumet } from './entities/account.entity';
 
 @Injectable()
 export class AccountService {
@@ -54,14 +47,14 @@ export class AccountService {
     }
     return {
       code: 200,
-      account: await this.findById(id),
+      account: await this.getAccountById(id),
     };
   }
 
   async addMoney(id: string, amount: number) {
     let changedAmount = 0;
 
-    let currentAccount: Account = await this.accountModel.findById(id).exec();
+    let currentAccount: Account = await await this.getAccountById(id);
     if (!currentAccount) {
       return {
         code: 400,
@@ -82,7 +75,7 @@ export class AccountService {
 
   async removeMoney(id: string, amount: number) {
     let changedAmount = 0;
-    let currentAccount: Account = await this.accountModel.findById(id).exec();
+    let currentAccount: Account = await this.getAccountById(id);
     if (!currentAccount) {
       return {
         code: 400,
