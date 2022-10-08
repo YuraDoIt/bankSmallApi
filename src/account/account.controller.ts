@@ -10,6 +10,8 @@ import {
 import { moneyOperationType } from '../commonStructure/moneyOperationType';
 import { AccountService } from './account.service';
 import { CreateAccountI } from './dto/create.account.dto';
+import { moneyOperationDto } from './dto/money.operation.dto';
+import { moneyTransactionDto } from './dto/money.transaction.dto';
 
 @Controller('account')
 export class AccountController {
@@ -31,11 +33,7 @@ export class AccountController {
   @Get('addMoney')
   async moneyTransact(
     @Body()
-    body: {
-      id: string;
-      amount: number;
-      typeTransact: moneyOperationType;
-    },
+    body: moneyOperationDto,
   ) {
     return this.accountService.moneyOperation(
       body.id,
@@ -47,6 +45,11 @@ export class AccountController {
   @Post('create')
   async createAccount(@Body() dto: CreateAccountI) {
     return await this.accountService.createAccount(dto);
+  }
+
+  @Post('transaction')
+  async makeTransaction(@Body() body: moneyTransactionDto) {
+    return this.accountService.makeTransaction(body);
   }
 
   @Delete('delete')

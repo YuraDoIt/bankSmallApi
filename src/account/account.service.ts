@@ -7,6 +7,8 @@ import { moneyOperationType } from '../commonStructure/moneyOperationType';
 import { ResponseInterface } from '../commonStructure/response.interface';
 import { Transaction } from '../transaction/entities/transaction.entity';
 import { CreateAccountI } from './dto/create.account.dto';
+import { moneyOperationDto } from './dto/money.operation.dto';
+import { moneyTransactionDto } from './dto/money.transaction.dto';
 import {
   Account,
   AccountDocumet,
@@ -115,6 +117,22 @@ export class AccountService {
       return {
         code: 200,
         account: await this.getAccountById(id),
+      };
+    }
+  }
+
+  async makeTransaction(body: moneyTransactionDto) {
+    try {
+      await this.moneyOperation(body.id_lend, body.amount, 'remove');
+      await this.moneyOperation(body.id_get, body.amount, 'add');
+      return {
+        code: 200,
+        message: 'successfyly transfered',
+      };
+    } catch (err) {
+      return {
+        code: 404,
+        message: 'cannot make transfer',
       };
     }
   }
