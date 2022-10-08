@@ -58,27 +58,10 @@ export class AccountService {
     };
   }
 
-  async moneyOperation(
-    id: string,
-    amount: number,
-    typeOperation: moneyOperationType,
-  ) {
-    if (!typeOperation) {
-      return {
-        code: 505,
-        message: 'please put type of transaction add || remove',
-      };
-    }
-    if (typeOperation != 'add') {
-      if (typeOperation != 'remove')
-        return {
-          code: 505,
-          message: 'please put type of transaction add || remove',
-        };
-    }
+  async addMoney(id: string, amount: number) {
+    let changedAmount = 0;
 
-    let currentAccount: Account = await this.getAccountById(id);
-
+    let currentAccount: Account = await this.accountModel.findById(id).exec();
     if (!currentAccount) {
       return {
         code: 400,
@@ -86,55 +69,64 @@ export class AccountService {
       };
     }
 
-    if (typeOperation === 'add') {
-      let update = await this.accountModel
-        .findOneAndUpdate(
-          { id: id },
-          { $set: { balans: currentAccount.balans + amount } },
-        )
-        .exec();
+    changedAmount = currentAccount.balans + amount;
+    await this.accountModel
+      .findByIdAndUpdate(id, { $set: { balans: changedAmount } })
+      .exec();
 
-      console.log(update);
+    return {
+      code: 200,
+      account: await this.getAccountById(id),
+    };
+  }
 
+  async removeMoney(id: string, amount: number) {
+    let changedAmount = 0;
+    let currentAccount: Account = await this.accountModel.findById(id).exec();
+    if (!currentAccount) {
       return {
-        code: 200,
-        account: await this.getAccountById(id),
-      };
-    } else if (typeOperation === 'remove') {
-      if (currentAccount.balans < amount) {
-        return {
-          code: 505,
-          message: 'balanse is less than amount',
-        };
-      }
-      let update = await this.accountModel
-        .findOneAndUpdate(
-          { id: id },
-          { $set: { balans: currentAccount.balans - amount } },
-        )
-        .exec();
-
-      return {
-        code: 200,
-        account: await this.getAccountById(id),
+        code: 400,
+        message: 'current account by id not exist',
       };
     }
+    if (currentAccount.balans < amount) {
+      return {
+        code: 505,
+        message: 'balanse is less than amount',
+      };
+    }
+    if (currentAccount.balans === 0) {
+      return {
+        code: 400,
+        message: 'balance on you account is 0 please add some money',
+      };
+    }
+
+    changedAmount = currentAccount.balans - amount;
+    let update = await this.accountModel
+      .findByIdAndUpdate(id, { $set: { balans: changedAmount } })
+      .exec();
+
+    return {
+      code: 200,
+      account: await this.getAccountById(id),
+    };
   }
 
   async makeTransaction(body: moneyTransactionDto) {
-    try {
-      await this.moneyOperation(body.id_lend, body.amount, 'remove');
-      await this.moneyOperation(body.id_get, body.amount, 'add');
+    let senderAccount = await this.removeMoney(body.id_lend, body.amount);
+    if (senderAccount.code !== 200) {
       return {
-        code: 200,
-        message: 'successfyly transfered',
-      };
-    } catch (err) {
-      return {
-        code: 404,
-        message: 'cannot make transfer',
+        code: 400,
+        message: 'cannot do this operation money is not enought',
       };
     }
+    let getterAccount = await this.addMoney(body.id_get, body.amount);
+
+    return {
+      send: senderAccount,
+      get: getterAccount,
+    };
   }
 
   async deleteAll() {

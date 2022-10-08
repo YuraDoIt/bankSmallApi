@@ -30,16 +30,20 @@ export class AccountController {
     return this.accountService.getAllAccount();
   }
 
-  @Get('addMoney')
-  async moneyTransact(
+  @Post('money')
+  async addMoney(
     @Body()
     body: moneyOperationDto,
   ) {
-    return this.accountService.moneyOperation(
-      body.id,
-      body.amount,
-      body.typeTransact,
-    );
+    return this.accountService.addMoney(body.id, body.amount);
+  }
+
+  @Post('removeMoney')
+  async removeMoney(
+    @Body()
+    body: moneyOperationDto,
+  ) {
+    return this.accountService.removeMoney(body.id, body.amount);
   }
 
   @Post('create')
